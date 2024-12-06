@@ -28,7 +28,7 @@ class NoteRepositoryImpl implements NoteRepository {
   }
 
   @override
-  Future<void> updateNoteById(int id, Note note) async {
-    await db.updateNoteById(id, note);
+  Future<void> updateNote( Note note) async {
+    await db.updateNote( note);
   }
 }

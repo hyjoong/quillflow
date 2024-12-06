@@ -31,12 +31,12 @@ class NoteDataSource {
     );
   }
 
-  Future updateNoteById(int id, Note note) async {
+  Future updateNote(Note note) async {
     await db.update(
       'note',
       note.toJson(),
       where: 'id = ?',
-      whereArgs: [id],
+      whereArgs: [note.id],
     );
   }
 
