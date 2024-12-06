@@ -1,9 +1,9 @@
 import 'package:quillflow/domain/model/note.dart';
 import 'package:sqflite/sqflite.dart';
 
-class NoteDb {
+class NoteDataSource {
   Database db;
-  NoteDb(this.db);
+  NoteDataSource(this.db);
 
   Future<Note?> getNoteById(int id) async {
     final List<Map<String, dynamic>> maps = await db.query(

@@ -1,9 +1,9 @@
-import 'package:quillflow/data/data_source/note_db.dart';
+import 'package:quillflow/data/data_source/note_data_source.dart';
 import 'package:quillflow/domain/model/note.dart';
 import 'package:quillflow/domain/repository/note_repository.dart';
 
 class NoteRepositoryImpl implements NoteRepository {
-  final NoteDb db;
+  final NoteDataSource db;
 
   NoteRepositoryImpl(this.db);
 
