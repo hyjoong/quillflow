@@ -21,7 +21,10 @@ class MyApp extends StatelessWidget {
           Theme.of(context).floatingActionButtonTheme.copyWith(
             backgroundColor: lightBlue,
             foregroundColor: darkGray,
-          )
+          ),
+        appBarTheme: Theme.of(context).appBarTheme.copyWith(
+          backgroundColor: darkGray,
+        ),
       ),
       home: const NotesScreen(),
     );
