@@ -1,10 +1,11 @@
 import 'dart:ui';
 
-const roseBud = Color(0xFFFFAB91);
-const primrose = Color(0xFFE7ED9B);
-const wisteria = Color(0xFFCF94DA);
-const skyBlue = Color(0xFF81DEEA);
-const illusion = Color(0xFFF48FB1);
+const mint = Color(0xFFB5EAD7);
+const peach = Color(0xFFFFB7B2);
+const lavender = Color(0xFFE2D1F9);
+const sage = Color(0xFFCBD18F);
+const coral = Color(0xFFFEC5BB);
+const powder = Color(0xFFBDE0FE);
 
 const darkGray = Color(0xFF202020);
 const lightBlue = Color(0xFFD7E8DE);

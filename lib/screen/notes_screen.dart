@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quillflow/domain/model/note.dart';
+import 'package:quillflow/screen/add_edit_note_screen.dart';
 import 'package:quillflow/presentation/notes/components/note_item.dart';
 import 'package:quillflow/ui/colors.dart';
 
@@ -19,7 +20,14 @@ class NotesScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddEditNoteScreen(),
+            ),
+          );
+        },
         child: const Icon(Icons.add),
       ),
       body: Padding(
@@ -30,7 +38,7 @@ class NotesScreen extends StatelessWidget {
               note: Note(
                 title: 'title',
                 content: 'content',
-                color: wisteria.value,
+                color: mint.value,
                 timestamp: 1,
               ),
             ),
@@ -38,7 +46,7 @@ class NotesScreen extends StatelessWidget {
               note: Note(
                 title: 'title 2',
                 content: 'content',
-                color: skyBlue.value,
+                color: mint.value,
                 timestamp: 2,
               ),
             )
