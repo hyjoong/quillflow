@@ -1,13 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:quillflow/domain/model/note.dart';
 import 'package:quillflow/domain/repository/note_repository.dart';
 import 'package:quillflow/presentation/add_edit_note/add_edit_note_event.dart';
+import 'package:quillflow/presentation/add_edit_note/add_edit_note_ui_event.dart';
+import 'package:quillflow/ui/colors.dart';
 
 class AddEditNoteViewModel with ChangeNotifier {
   final NoteRepository repository;
 
-  int _color = Colors.orange.value;
+  int _color = mint.value;
   int get color => _color;
+
+  final _eventController = StreamController<AddEditNoteUiEvent>.broadcast();
+
+  Stream<AddEditNoteUiEvent> get eventStream => _eventController.stream;
 
   AddEditNoteViewModel(this.repository);
 
@@ -39,5 +47,7 @@ class AddEditNoteViewModel with ChangeNotifier {
         timestamp: DateTime.now().microsecondsSinceEpoch,
       ));
     }
+
+    _eventController.add(const AddEditNoteUiEvent.saveNote());
   }
 }

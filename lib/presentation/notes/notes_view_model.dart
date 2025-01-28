@@ -12,11 +12,13 @@ class NoteViewModel with ChangeNotifier {
 
   Note? _recentlyDeletedNote;
 
-  NoteViewModel(this.repository);
+  NoteViewModel(this.repository) {
+    _loadNotes();
+  }
 
   void onEvent(NotesEvent event) {
     event.when(
-      loadNotes: () {},
+      loadNotes: _loadNotes,
       deleteNote: (note) {},
       restoreNote: () {},
     );

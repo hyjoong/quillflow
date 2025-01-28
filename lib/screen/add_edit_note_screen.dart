@@ -1,8 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:quillflow/domain/model/note.dart';
+import 'package:quillflow/presentation/add_edit_note/add_edit_note_event.dart';
+import 'package:quillflow/presentation/add_edit_note/add_edit_note_view_model.dart';
 import 'package:quillflow/ui/colors.dart';
+import 'package:provider/provider.dart';
 
 class AddEditNoteScreen extends StatefulWidget {
-  const AddEditNoteScreen({super.key});
+  final Note? note;
+
+  const AddEditNoteScreen({
+    super.key,
+    this.note,
+  });
 
   @override
   State<AddEditNoteScreen> createState() => _AddEditNoteScreenState();
@@ -11,6 +22,7 @@ class AddEditNoteScreen extends StatefulWidget {
 class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
+  StreamSubscription? _streamSubscription;
 
   final List<Color> noteColors = [
     mint,
@@ -21,11 +33,34 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
     powder,
   ];
 
-  Color _color = mint;
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final viewModel = context.read<AddEditNoteViewModel>();
+
+     _streamSubscription=  viewModel.eventStream.listen((event) {
+        event.when(saveNote: () {
+          Navigator.pop(context, true);
+        });
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<AddEditNoteViewModel>();
+
     return Scaffold(
+      backgroundColor: Color(viewModel.color),
       body: SafeArea(
         child: Column(
           children: [
@@ -34,11 +69,11 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
               child: Container(
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: _color.withOpacity(0.3),
+                  color: Colors.white.withOpacity(0.95),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: _color.withOpacity(0.2),
+                      color: Color(viewModel.color).withOpacity(0.2),
                       blurRadius: 15,
                       spreadRadius: 5,
                     ),
@@ -87,11 +122,79 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        icon: const Icon(Icons.save),
-        label: const Text('저장'),
-        backgroundColor: _color,
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            if (_titleController.text.isEmpty ||
+                _contentController.text.isEmpty) {
+              const snackBar = SnackBar(content: Text('제목이나 내용이 비어 있습니다'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              return;
+            }
+            viewModel.onEvent(AddEditNoteEvent.saveNote(
+              widget.note?.id,
+              _titleController.text,
+              _contentController.text,
+            ));
+          },
+          child: const Icon(Icons.save, color: darkGray),
+          backgroundColor: Colors.white.withOpacity(0.95),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildColorPicker() {
+    final viewModel = context.watch<AddEditNoteViewModel>();
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: noteColors.length,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemBuilder: (context, index) {
+          final color = noteColors[index];
+          return GestureDetector(
+            onTap: () {
+              viewModel.onEvent(AddEditNoteEvent.changeColor(color.value));
+            },
+            child: Container(
+              width: 45,
+              height: 45,
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: viewModel.color == color.value
+                      ? darkGray
+                      : Colors.transparent,
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.4),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: viewModel.color == color.value
+                  ? const Icon(Icons.check, color: darkGray)
+                  : null,
+            ),
+          );
+        },
       ),
     );
   }
@@ -107,54 +210,13 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
           ),
           const Expanded(
             child: Text(
-              '새로운 노트',
+              '노트 작성',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
           ),
           const SizedBox(width: 40),
         ],
-      ),
-    );
-  }
-
-  Widget _buildColorPicker() {
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: noteColors.length,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemBuilder: (context, index) {
-          final color = noteColors[index];
-          return GestureDetector(
-            onTap: () => setState(() => _color = color),
-            child: Container(
-              width: 45,
-              height: 45,
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: _color == color ? darkGray : Colors.transparent,
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withOpacity(0.4),
-                    blurRadius: 8,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: _color == color
-                  ? const Icon(Icons.check, color: darkGray)
-                  : null,
-            ),
-          );
-        },
       ),
     );
   }

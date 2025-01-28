@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:quillflow/domain/model/note.dart';
+import 'package:quillflow/presentation/notes/notes_event.dart';
+import 'package:quillflow/presentation/notes/notes_view_model.dart';
 import 'package:quillflow/screen/add_edit_note_screen.dart';
 import 'package:quillflow/presentation/notes/components/note_item.dart';
+import 'package:provider/provider.dart';
 
 class NotesScreen extends StatelessWidget {
   const NotesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<NoteViewModel>();
+    final state = viewModel.state;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -52,19 +58,23 @@ class NotesScreen extends StatelessWidget {
           ],
         ),
         child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            // isSaved가 false면 뒤로가기, true면 저장버튼을 누른 경우
+            bool? isSaved = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const AddEditNoteScreen(),
               ),
             );
+            if (isSaved != null && isSaved) {
+              viewModel.onEvent(const NotesEvent.loadNotes());
+            }
           },
           backgroundColor: Colors.transparent,
           elevation: 0,
           child: const Icon(
             Icons.add_rounded,
-            color: Colors.white,  
+            color: Colors.white,
             size: 32,
           ),
         ),
@@ -78,15 +88,11 @@ class NotesScreen extends StatelessWidget {
             crossAxisSpacing: 16,
             childAspectRatio: 0.85,
           ),
-          itemCount: 10, // TODO: 실제 데이터로 수정
+          itemCount: state.notes.length,
           itemBuilder: (context, index) {
+            final note = state.notes[index];
             return NoteItem(
-              note: Note(
-                title: 'Note ${index + 1}',
-                content: '메모  ${index + 1}',
-                color: _getRandomNoteColor().value,
-                timestamp: DateTime.now().millisecondsSinceEpoch,
-              ),
+              note: note,
               onDeleteTap: () {
                 // TODO: 삭제 로직 구현
               },
