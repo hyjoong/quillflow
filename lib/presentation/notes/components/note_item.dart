@@ -34,23 +34,37 @@ class NoteItem extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  note.content,
-                  maxLines: 10,
-                  overflow: TextOverflow.ellipsis,
+                Expanded(
+                  child: Text(
+                    note.content,
+                    maxLines: 6,
+                    overflow: TextOverflow.fade,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(height: 1.5),
+                  ),
                 ),
               ],
             ),
           ),
           Positioned(
-              bottom: 8,
-              right: 8,
-              child: GestureDetector(
-                onTap: () {
-                  onDeleteTap?.call();
-                },
-                child: const Icon(Icons.delete),
-              ))
+            bottom: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () {
+                onDeleteTap?.call();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.delete, size: 20),
+              ),
+            ),
+          )
         ],
       ),
     );
