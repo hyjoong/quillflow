@@ -19,8 +19,8 @@ class NoteViewModel with ChangeNotifier {
   void onEvent(NotesEvent event) {
     event.when(
       loadNotes: _loadNotes,
-      deleteNote: (note) {},
-      restoreNote: () {},
+      deleteNote: _deleteNote,
+      restoreNote: _restoreNote,
     );
   }
 
@@ -33,9 +33,15 @@ class NoteViewModel with ChangeNotifier {
   }
 
   Future<void> _deleteNote(Note note) async {
-    await repository.deleteNoteById(note.id!);
-    _recentlyDeletedNote = note;
-    await _loadNotes();
+    try {
+      await repository.deleteNoteById(note.id!);
+      _recentlyDeletedNote = note;
+      final updatedNotes = await repository.getNotes();
+      _state = state.copyWith(notes: updatedNotes);
+      notifyListeners();
+    } catch (e) {
+      print('Error deleting note: $e');
+    }
   }
 
   Future<void> _restoreNote() async {

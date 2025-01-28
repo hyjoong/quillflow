@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quillflow/domain/model/note.dart';
 import 'package:quillflow/presentation/notes/notes_event.dart';
 import 'package:quillflow/presentation/notes/notes_view_model.dart';
 import 'package:quillflow/screen/add_edit_note_screen.dart';
@@ -94,7 +93,17 @@ class NotesScreen extends StatelessWidget {
             return NoteItem(
               note: note,
               onDeleteTap: () {
-                // TODO: 삭제 로직 구현
+                viewModel.onEvent(NotesEvent.deleteNote(note));
+                final snackBar = SnackBar(
+                  content: const Text('노트가 삭제되었습니다.'),
+                  action: SnackBarAction(
+                    label: '취소',
+                    onPressed: () {
+                      viewModel.onEvent(const NotesEvent.restoreNote());
+                    },
+                  ),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
               },
             );
           },
@@ -135,17 +144,5 @@ class NotesScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _getRandomNoteColor() {
-    final colors = [
-      Colors.blue[200],
-      Colors.green[200],
-      Colors.orange[200],
-      Colors.pink[200],
-      Colors.purple[200],
-      Colors.teal[200],
-    ];
-    return colors[DateTime.now().microsecond % colors.length]!;
   }
 }
