@@ -42,7 +42,7 @@ class AddEditNoteViewModel with ChangeNotifier {
         title: title,
         content: content,
         color: _color,
-        timestamp: DateTime.now().microsecondsSinceEpoch,
+        timestamp: DateTime.now().millisecondsSinceEpoch,
       ));
     } else {
       await repository.updateNote(Note(
@@ -50,7 +50,7 @@ class AddEditNoteViewModel with ChangeNotifier {
         title: title,
         content: content,
         color: _color,
-        timestamp: DateTime.now().microsecondsSinceEpoch,
+        timestamp: DateTime.now().millisecondsSinceEpoch,
       ));
     }
 

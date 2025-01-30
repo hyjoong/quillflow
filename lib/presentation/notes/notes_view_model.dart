@@ -2,7 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:quillflow/domain/model/note.dart';
 import 'package:quillflow/domain/repository/note_repository.dart';
 import 'package:quillflow/presentation/notes/notes_event.dart';
-import 'package:quillflow/presentation/notes/notes_state.dart';
+
+enum NoteSortType {
+  dateCreated,
+  title,
+  color,
+}
+
+class NotesState {
+  final List<Note> notes;
+  final NoteSortType sortType;
+
+  NotesState({
+    required this.notes,
+    this.sortType = NoteSortType.dateCreated,
+  });
+
+  String getFormattedDate(int timestamp) {
+    final milliseconds = timestamp.toString().length > 13
+        ? (timestamp / 1000).round()
+        : timestamp;
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+    return '${dateTime.year}.${dateTime.month}.${dateTime.day} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
+  NotesState copyWith({
+    List<Note>? notes,
+    NoteSortType? sortType,
+  }) {
+    return NotesState(
+      notes: notes ?? this.notes,
+      sortType: sortType ?? this.sortType,
+    );
+  }
+}
 
 class NoteViewModel with ChangeNotifier {
   final NoteRepository repository;
