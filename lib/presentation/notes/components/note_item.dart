@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:quillflow/domain/model/note.dart';
+import 'package:provider/provider.dart';
+import 'package:quillflow/presentation/notes/notes_view_model.dart';
 
 class NoteItem extends StatelessWidget {
   final Note note;
-  final Function? onDeleteTap;
+  final Function onDeleteTap;
 
   const NoteItem({
     super.key,
     required this.note,
-    this.onDeleteTap,
+    required this.onDeleteTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<NoteViewModel>();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Stack(
@@ -45,6 +49,14 @@ class NoteItem extends StatelessWidget {
                         ?.copyWith(height: 1.5),
                   ),
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  viewModel.state.getFormattedDate(note.timestamp),
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 11,
+                  ),
+                ),
               ],
             ),
           ),
@@ -53,7 +65,7 @@ class NoteItem extends StatelessWidget {
             right: 8,
             child: GestureDetector(
               onTap: () {
-                onDeleteTap?.call();
+                onDeleteTap.call();
               },
               child: Container(
                 padding: const EdgeInsets.all(4),

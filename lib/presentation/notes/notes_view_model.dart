@@ -57,11 +57,22 @@ class NoteViewModel with ChangeNotifier {
     );
   }
 
+  void _sortNotes(List<Note> notes) {
+    notes.sort((a, b) {
+      final aMillis = a.timestamp.toString().length > 13
+          ? (a.timestamp / 1000).round()
+          : a.timestamp;
+      final bMillis = b.timestamp.toString().length > 13
+          ? (b.timestamp / 1000).round()
+          : b.timestamp;
+      return -aMillis.compareTo(bMillis);
+    });
+  }
+
   Future<void> _loadNotes() async {
     List<Note> notes = await repository.getNotes();
-    _state = state.copyWith(
-      notes: notes,
-    );
+    _sortNotes(notes);
+    _state = state.copyWith(notes: notes);
     notifyListeners();
   }
 
@@ -70,6 +81,7 @@ class NoteViewModel with ChangeNotifier {
       await repository.deleteNoteById(note.id!);
       _recentlyDeletedNote = note;
       final updatedNotes = await repository.getNotes();
+      _sortNotes(updatedNotes);
       _state = state.copyWith(notes: updatedNotes);
       notifyListeners();
     } catch (e) {
