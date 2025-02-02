@@ -4,6 +4,7 @@ import 'package:quillflow/presentation/notes/notes_view_model.dart';
 import 'package:quillflow/screen/add_edit_note_screen.dart';
 import 'package:quillflow/presentation/notes/components/note_item.dart';
 import 'package:provider/provider.dart';
+import 'package:quillflow/presentation/notes/notes_state.dart';
 
 class NotesScreen extends StatelessWidget {
   const NotesScreen({super.key});
@@ -34,6 +35,7 @@ class NotesScreen extends StatelessWidget {
               children: [
                 const SizedBox(width: 12),
                 _buildActionButton(
+                  context: context,
                   icon: Icons.sort_rounded,
                   onPressed: () {},
                 ),
@@ -126,36 +128,44 @@ class NotesScreen extends StatelessWidget {
   }
 
   Widget _buildActionButton({
+    required BuildContext context,
     required IconData icon,
     required VoidCallback onPressed,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+    final viewModel = context.watch<NoteViewModel>();
+
+    return PopupMenuButton<NoteSortType>(
+      icon: Icon(
+        Icons.sort_rounded,
+        color: Colors.grey[700],
+        size: 26,
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(15),
-          onTap: onPressed,
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Icon(
-              icon,
-              color: Colors.grey[700],
-              size: 26,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      itemBuilder: (context) => NoteSortType.values
+          .map(
+            (sortType) => PopupMenuItem(
+              value: sortType,
+              child: Row(
+                children: [
+                  Icon(
+                    viewModel.state.sortType == sortType
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    size: 20,
+                    color: Colors.grey[700],
+                  ),
+                  const SizedBox(width: 8),
+                  Text(sortType.label),
+                ],
+              ),
             ),
-          ),
-        ),
-      ),
+          )
+          .toList(),
+      onSelected: (sortType) {
+        viewModel.onEvent(NotesEvent.changeSort(sortType));
+      },
     );
   }
 }

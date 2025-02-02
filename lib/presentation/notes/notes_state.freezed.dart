@@ -21,6 +21,7 @@ NotesState _$NotesStateFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$NotesState {
   List<Note> get notes => throw _privateConstructorUsedError;
+  NoteSortType get sortType => throw _privateConstructorUsedError;
 
   /// Serializes this NotesState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -38,7 +39,7 @@ abstract class $NotesStateCopyWith<$Res> {
           NotesState value, $Res Function(NotesState) then) =
       _$NotesStateCopyWithImpl<$Res, NotesState>;
   @useResult
-  $Res call({List<Note> notes});
+  $Res call({List<Note> notes, NoteSortType sortType});
 }
 
 /// @nodoc
@@ -57,12 +58,17 @@ class _$NotesStateCopyWithImpl<$Res, $Val extends NotesState>
   @override
   $Res call({
     Object? notes = null,
+    Object? sortType = null,
   }) {
     return _then(_value.copyWith(
       notes: null == notes
           ? _value.notes
           : notes // ignore: cast_nullable_to_non_nullable
               as List<Note>,
+      sortType: null == sortType
+          ? _value.sortType
+          : sortType // ignore: cast_nullable_to_non_nullable
+              as NoteSortType,
     ) as $Val);
   }
 }
@@ -75,7 +81,7 @@ abstract class _$$NotesStateImplCopyWith<$Res>
       __$$NotesStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<Note> notes});
+  $Res call({List<Note> notes, NoteSortType sortType});
 }
 
 /// @nodoc
@@ -92,12 +98,17 @@ class __$$NotesStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? notes = null,
+    Object? sortType = null,
   }) {
     return _then(_$NotesStateImpl(
       notes: null == notes
           ? _value._notes
           : notes // ignore: cast_nullable_to_non_nullable
               as List<Note>,
+      sortType: null == sortType
+          ? _value.sortType
+          : sortType // ignore: cast_nullable_to_non_nullable
+              as NoteSortType,
     ));
   }
 }
@@ -105,7 +116,9 @@ class __$$NotesStateImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$NotesStateImpl implements _NotesState {
-  _$NotesStateImpl({required final List<Note> notes}) : _notes = notes;
+  _$NotesStateImpl(
+      {required final List<Note> notes, this.sortType = NoteSortType.dateDesc})
+      : _notes = notes;
 
   factory _$NotesStateImpl.fromJson(Map<String, dynamic> json) =>
       _$$NotesStateImplFromJson(json);
@@ -119,8 +132,12 @@ class _$NotesStateImpl implements _NotesState {
   }
 
   @override
+  @JsonKey()
+  final NoteSortType sortType;
+
+  @override
   String toString() {
-    return 'NotesState(notes: $notes)';
+    return 'NotesState(notes: $notes, sortType: $sortType)';
   }
 
   @override
@@ -128,13 +145,15 @@ class _$NotesStateImpl implements _NotesState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$NotesStateImpl &&
-            const DeepCollectionEquality().equals(other._notes, _notes));
+            const DeepCollectionEquality().equals(other._notes, _notes) &&
+            (identical(other.sortType, sortType) ||
+                other.sortType == sortType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_notes));
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_notes), sortType);
 
   /// Create a copy of NotesState
   /// with the given fields replaced by the non-null parameter values.
@@ -153,13 +172,17 @@ class _$NotesStateImpl implements _NotesState {
 }
 
 abstract class _NotesState implements NotesState {
-  factory _NotesState({required final List<Note> notes}) = _$NotesStateImpl;
+  factory _NotesState(
+      {required final List<Note> notes,
+      final NoteSortType sortType}) = _$NotesStateImpl;
 
   factory _NotesState.fromJson(Map<String, dynamic> json) =
       _$NotesStateImpl.fromJson;
 
   @override
   List<Note> get notes;
+  @override
+  NoteSortType get sortType;
 
   /// Create a copy of NotesState
   /// with the given fields replaced by the non-null parameter values.

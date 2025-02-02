@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quillflow/domain/model/note.dart';
 import 'package:quillflow/domain/use_case/use_cases.dart';
 import 'package:quillflow/presentation/notes/notes_event.dart';
-
-enum NoteSortType {
-  dateCreated,
-  title,
-  color,
-}
+import 'package:quillflow/presentation/notes/notes_state.dart';
 
 class NotesState {
   final List<Note> notes;
@@ -15,7 +10,7 @@ class NotesState {
 
   NotesState({
     required this.notes,
-    this.sortType = NoteSortType.dateCreated,
+    this.sortType = NoteSortType.dateDesc,
   });
 
   String getFormattedDate(int timestamp) {
@@ -40,7 +35,7 @@ class NotesState {
 class NoteViewModel with ChangeNotifier {
   final UseCases useCases;
 
-  NotesState _state = NotesState(notes: []);
+  NotesState _state = NotesState(notes: [], sortType: NoteSortType.dateDesc);
   NotesState get state => _state;
 
   Note? _recentlyDeletedNote;
@@ -54,19 +49,49 @@ class NoteViewModel with ChangeNotifier {
       loadNotes: _loadNotes,
       deleteNote: _deleteNote,
       restoreNote: _restoreNote,
+      changeSort: (sortType) async {
+        await _changeSort(sortType);
+      },
     );
   }
 
   void _sortNotes(List<Note> notes) {
-    notes.sort((a, b) {
-      final aMillis = a.timestamp.toString().length > 13
-          ? (a.timestamp / 1000).round()
-          : a.timestamp;
-      final bMillis = b.timestamp.toString().length > 13
-          ? (b.timestamp / 1000).round()
-          : b.timestamp;
-      return -aMillis.compareTo(bMillis);
-    });
+    switch (_state.sortType) {
+      case NoteSortType.dateDesc:
+        notes.sort((a, b) {
+          final aDate =
+              DateTime.fromMillisecondsSinceEpoch(a.getNormalizedTimestamp());
+          final bDate =
+              DateTime.fromMillisecondsSinceEpoch(b.getNormalizedTimestamp());
+          return bDate.compareTo(aDate);
+        });
+        break;
+      case NoteSortType.dateAsc:
+        notes.sort((a, b) {
+          final aDate =
+              DateTime.fromMillisecondsSinceEpoch(a.getNormalizedTimestamp());
+          final bDate =
+              DateTime.fromMillisecondsSinceEpoch(b.getNormalizedTimestamp());
+          return aDate.compareTo(bDate);
+        });
+
+        break;
+      case NoteSortType.titleAsc:
+        notes.sort(
+            (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+        break;
+      case NoteSortType.colorAsc:
+        notes.sort((a, b) => a.color.compareTo(b.color));
+        break;
+    }
+  }
+
+  Future<void> _changeSort(NoteSortType sortType) async {
+    _state = state.copyWith(sortType: sortType);
+    List<Note> sortedNotes = List.from(_state.notes);
+    _sortNotes(sortedNotes);
+    _state = state.copyWith(notes: sortedNotes);
+    notifyListeners();
   }
 
   Future<void> _loadNotes() async {

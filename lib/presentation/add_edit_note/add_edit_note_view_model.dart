@@ -37,12 +37,15 @@ class AddEditNoteViewModel with ChangeNotifier {
           .add(const AddEditNoteUiEvent.showSnackBar('제목이나 내용이 비어 있습니다'));
       return;
     }
+
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
+
     if (id == null) {
       await repository.insertNote(Note(
         title: title,
         content: content,
         color: _color,
-        timestamp: DateTime.now().millisecondsSinceEpoch,
+        timestamp: currentTime,
       ));
     } else {
       await repository.updateNote(Note(
@@ -50,7 +53,7 @@ class AddEditNoteViewModel with ChangeNotifier {
         title: title,
         content: content,
         color: _color,
-        timestamp: DateTime.now().millisecondsSinceEpoch,
+        timestamp: currentTime,
       ));
     }
 

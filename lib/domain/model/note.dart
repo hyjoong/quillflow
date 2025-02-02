@@ -14,6 +14,16 @@ class Note with _$Note {
     int? id,
   }) = _Note;
 
-  factory Note.fromJson(Map<String, Object?> json)
-  => _$NoteFromJson(json);
+  factory Note.fromJson(Map<String, Object?> json) => _$NoteFromJson(json);
+}
+
+extension NoteX on Note {
+  int getNormalizedTimestamp() {
+    if (timestamp.toString().length > 13) {
+      return (timestamp / 1000).round();
+    } else if (timestamp.toString().length < 13) {
+      return timestamp * 1000;
+    }
+    return timestamp;
+  }
 }

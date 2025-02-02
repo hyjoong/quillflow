@@ -21,6 +21,7 @@ mixin _$NotesEvent {
     required TResult Function() loadNotes,
     required TResult Function(Note note) deleteNote,
     required TResult Function() restoreNote,
+    required TResult Function(NoteSortType sortType) changeSort,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -28,6 +29,7 @@ mixin _$NotesEvent {
     TResult? Function()? loadNotes,
     TResult? Function(Note note)? deleteNote,
     TResult? Function()? restoreNote,
+    TResult? Function(NoteSortType sortType)? changeSort,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -35,6 +37,7 @@ mixin _$NotesEvent {
     TResult Function()? loadNotes,
     TResult Function(Note note)? deleteNote,
     TResult Function()? restoreNote,
+    TResult Function(NoteSortType sortType)? changeSort,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -43,6 +46,7 @@ mixin _$NotesEvent {
     required TResult Function(LoadNotes value) loadNotes,
     required TResult Function(DeleteNote value) deleteNote,
     required TResult Function(RestoreNote value) restoreNote,
+    required TResult Function(ChangeSort value) changeSort,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -50,6 +54,7 @@ mixin _$NotesEvent {
     TResult? Function(LoadNotes value)? loadNotes,
     TResult? Function(DeleteNote value)? deleteNote,
     TResult? Function(RestoreNote value)? restoreNote,
+    TResult? Function(ChangeSort value)? changeSort,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -57,6 +62,7 @@ mixin _$NotesEvent {
     TResult Function(LoadNotes value)? loadNotes,
     TResult Function(DeleteNote value)? deleteNote,
     TResult Function(RestoreNote value)? restoreNote,
+    TResult Function(ChangeSort value)? changeSort,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -127,6 +133,7 @@ class _$LoadNotesImpl implements LoadNotes {
     required TResult Function() loadNotes,
     required TResult Function(Note note) deleteNote,
     required TResult Function() restoreNote,
+    required TResult Function(NoteSortType sortType) changeSort,
   }) {
     return loadNotes();
   }
@@ -137,6 +144,7 @@ class _$LoadNotesImpl implements LoadNotes {
     TResult? Function()? loadNotes,
     TResult? Function(Note note)? deleteNote,
     TResult? Function()? restoreNote,
+    TResult? Function(NoteSortType sortType)? changeSort,
   }) {
     return loadNotes?.call();
   }
@@ -147,6 +155,7 @@ class _$LoadNotesImpl implements LoadNotes {
     TResult Function()? loadNotes,
     TResult Function(Note note)? deleteNote,
     TResult Function()? restoreNote,
+    TResult Function(NoteSortType sortType)? changeSort,
     required TResult orElse(),
   }) {
     if (loadNotes != null) {
@@ -161,6 +170,7 @@ class _$LoadNotesImpl implements LoadNotes {
     required TResult Function(LoadNotes value) loadNotes,
     required TResult Function(DeleteNote value) deleteNote,
     required TResult Function(RestoreNote value) restoreNote,
+    required TResult Function(ChangeSort value) changeSort,
   }) {
     return loadNotes(this);
   }
@@ -171,6 +181,7 @@ class _$LoadNotesImpl implements LoadNotes {
     TResult? Function(LoadNotes value)? loadNotes,
     TResult? Function(DeleteNote value)? deleteNote,
     TResult? Function(RestoreNote value)? restoreNote,
+    TResult? Function(ChangeSort value)? changeSort,
   }) {
     return loadNotes?.call(this);
   }
@@ -181,6 +192,7 @@ class _$LoadNotesImpl implements LoadNotes {
     TResult Function(LoadNotes value)? loadNotes,
     TResult Function(DeleteNote value)? deleteNote,
     TResult Function(RestoreNote value)? restoreNote,
+    TResult Function(ChangeSort value)? changeSort,
     required TResult orElse(),
   }) {
     if (loadNotes != null) {
@@ -277,6 +289,7 @@ class _$DeleteNoteImpl implements DeleteNote {
     required TResult Function() loadNotes,
     required TResult Function(Note note) deleteNote,
     required TResult Function() restoreNote,
+    required TResult Function(NoteSortType sortType) changeSort,
   }) {
     return deleteNote(note);
   }
@@ -287,6 +300,7 @@ class _$DeleteNoteImpl implements DeleteNote {
     TResult? Function()? loadNotes,
     TResult? Function(Note note)? deleteNote,
     TResult? Function()? restoreNote,
+    TResult? Function(NoteSortType sortType)? changeSort,
   }) {
     return deleteNote?.call(note);
   }
@@ -297,6 +311,7 @@ class _$DeleteNoteImpl implements DeleteNote {
     TResult Function()? loadNotes,
     TResult Function(Note note)? deleteNote,
     TResult Function()? restoreNote,
+    TResult Function(NoteSortType sortType)? changeSort,
     required TResult orElse(),
   }) {
     if (deleteNote != null) {
@@ -311,6 +326,7 @@ class _$DeleteNoteImpl implements DeleteNote {
     required TResult Function(LoadNotes value) loadNotes,
     required TResult Function(DeleteNote value) deleteNote,
     required TResult Function(RestoreNote value) restoreNote,
+    required TResult Function(ChangeSort value) changeSort,
   }) {
     return deleteNote(this);
   }
@@ -321,6 +337,7 @@ class _$DeleteNoteImpl implements DeleteNote {
     TResult? Function(LoadNotes value)? loadNotes,
     TResult? Function(DeleteNote value)? deleteNote,
     TResult? Function(RestoreNote value)? restoreNote,
+    TResult? Function(ChangeSort value)? changeSort,
   }) {
     return deleteNote?.call(this);
   }
@@ -331,6 +348,7 @@ class _$DeleteNoteImpl implements DeleteNote {
     TResult Function(LoadNotes value)? loadNotes,
     TResult Function(DeleteNote value)? deleteNote,
     TResult Function(RestoreNote value)? restoreNote,
+    TResult Function(ChangeSort value)? changeSort,
     required TResult orElse(),
   }) {
     if (deleteNote != null) {
@@ -396,6 +414,7 @@ class _$RestoreNoteImpl implements RestoreNote {
     required TResult Function() loadNotes,
     required TResult Function(Note note) deleteNote,
     required TResult Function() restoreNote,
+    required TResult Function(NoteSortType sortType) changeSort,
   }) {
     return restoreNote();
   }
@@ -406,6 +425,7 @@ class _$RestoreNoteImpl implements RestoreNote {
     TResult? Function()? loadNotes,
     TResult? Function(Note note)? deleteNote,
     TResult? Function()? restoreNote,
+    TResult? Function(NoteSortType sortType)? changeSort,
   }) {
     return restoreNote?.call();
   }
@@ -416,6 +436,7 @@ class _$RestoreNoteImpl implements RestoreNote {
     TResult Function()? loadNotes,
     TResult Function(Note note)? deleteNote,
     TResult Function()? restoreNote,
+    TResult Function(NoteSortType sortType)? changeSort,
     required TResult orElse(),
   }) {
     if (restoreNote != null) {
@@ -430,6 +451,7 @@ class _$RestoreNoteImpl implements RestoreNote {
     required TResult Function(LoadNotes value) loadNotes,
     required TResult Function(DeleteNote value) deleteNote,
     required TResult Function(RestoreNote value) restoreNote,
+    required TResult Function(ChangeSort value) changeSort,
   }) {
     return restoreNote(this);
   }
@@ -440,6 +462,7 @@ class _$RestoreNoteImpl implements RestoreNote {
     TResult? Function(LoadNotes value)? loadNotes,
     TResult? Function(DeleteNote value)? deleteNote,
     TResult? Function(RestoreNote value)? restoreNote,
+    TResult? Function(ChangeSort value)? changeSort,
   }) {
     return restoreNote?.call(this);
   }
@@ -450,6 +473,7 @@ class _$RestoreNoteImpl implements RestoreNote {
     TResult Function(LoadNotes value)? loadNotes,
     TResult Function(DeleteNote value)? deleteNote,
     TResult Function(RestoreNote value)? restoreNote,
+    TResult Function(ChangeSort value)? changeSort,
     required TResult orElse(),
   }) {
     if (restoreNote != null) {
@@ -461,4 +485,157 @@ class _$RestoreNoteImpl implements RestoreNote {
 
 abstract class RestoreNote implements NotesEvent {
   const factory RestoreNote() = _$RestoreNoteImpl;
+}
+
+/// @nodoc
+abstract class _$$ChangeSortImplCopyWith<$Res> {
+  factory _$$ChangeSortImplCopyWith(
+          _$ChangeSortImpl value, $Res Function(_$ChangeSortImpl) then) =
+      __$$ChangeSortImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({NoteSortType sortType});
+}
+
+/// @nodoc
+class __$$ChangeSortImplCopyWithImpl<$Res>
+    extends _$NotesEventCopyWithImpl<$Res, _$ChangeSortImpl>
+    implements _$$ChangeSortImplCopyWith<$Res> {
+  __$$ChangeSortImplCopyWithImpl(
+      _$ChangeSortImpl _value, $Res Function(_$ChangeSortImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of NotesEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? sortType = null,
+  }) {
+    return _then(_$ChangeSortImpl(
+      null == sortType
+          ? _value.sortType
+          : sortType // ignore: cast_nullable_to_non_nullable
+              as NoteSortType,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ChangeSortImpl implements ChangeSort {
+  const _$ChangeSortImpl(this.sortType);
+
+  @override
+  final NoteSortType sortType;
+
+  @override
+  String toString() {
+    return 'NotesEvent.changeSort(sortType: $sortType)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChangeSortImpl &&
+            (identical(other.sortType, sortType) ||
+                other.sortType == sortType));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, sortType);
+
+  /// Create a copy of NotesEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChangeSortImplCopyWith<_$ChangeSortImpl> get copyWith =>
+      __$$ChangeSortImplCopyWithImpl<_$ChangeSortImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadNotes,
+    required TResult Function(Note note) deleteNote,
+    required TResult Function() restoreNote,
+    required TResult Function(NoteSortType sortType) changeSort,
+  }) {
+    return changeSort(sortType);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadNotes,
+    TResult? Function(Note note)? deleteNote,
+    TResult? Function()? restoreNote,
+    TResult? Function(NoteSortType sortType)? changeSort,
+  }) {
+    return changeSort?.call(sortType);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadNotes,
+    TResult Function(Note note)? deleteNote,
+    TResult Function()? restoreNote,
+    TResult Function(NoteSortType sortType)? changeSort,
+    required TResult orElse(),
+  }) {
+    if (changeSort != null) {
+      return changeSort(sortType);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LoadNotes value) loadNotes,
+    required TResult Function(DeleteNote value) deleteNote,
+    required TResult Function(RestoreNote value) restoreNote,
+    required TResult Function(ChangeSort value) changeSort,
+  }) {
+    return changeSort(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LoadNotes value)? loadNotes,
+    TResult? Function(DeleteNote value)? deleteNote,
+    TResult? Function(RestoreNote value)? restoreNote,
+    TResult? Function(ChangeSort value)? changeSort,
+  }) {
+    return changeSort?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LoadNotes value)? loadNotes,
+    TResult Function(DeleteNote value)? deleteNote,
+    TResult Function(RestoreNote value)? restoreNote,
+    TResult Function(ChangeSort value)? changeSort,
+    required TResult orElse(),
+  }) {
+    if (changeSort != null) {
+      return changeSort(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ChangeSort implements NotesEvent {
+  const factory ChangeSort(final NoteSortType sortType) = _$ChangeSortImpl;
+
+  NoteSortType get sortType;
+
+  /// Create a copy of NotesEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ChangeSortImplCopyWith<_$ChangeSortImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
