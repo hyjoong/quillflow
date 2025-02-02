@@ -1,11 +1,10 @@
 import 'package:quillflow/domain/model/note.dart';
 import 'package:quillflow/domain/repository/note_repository.dart';
 
-class UpdateNote {
+class DeleteNoteUseCase {
   final NoteRepository repository;
-  UpdateNote(this.repository);
-
+  DeleteNoteUseCase(this.repository);
   Future<void> call(Note note) async {
-    await repository.updateNote(note);
+    await repository.deleteNoteById(note.id!);
   }
 }

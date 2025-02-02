@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quillflow/domain/model/note.dart';
-import 'package:quillflow/domain/repository/note_repository.dart';
+import 'package:quillflow/domain/use_case/use_cases.dart';
 import 'package:quillflow/presentation/notes/notes_event.dart';
 
 enum NoteSortType {
@@ -38,14 +38,14 @@ class NotesState {
 }
 
 class NoteViewModel with ChangeNotifier {
-  final NoteRepository repository;
+  final UseCases useCases;
 
   NotesState _state = NotesState(notes: []);
   NotesState get state => _state;
 
   Note? _recentlyDeletedNote;
 
-  NoteViewModel(this.repository) {
+  NoteViewModel(this.useCases) {
     _loadNotes();
   }
 
@@ -70,7 +70,7 @@ class NoteViewModel with ChangeNotifier {
   }
 
   Future<void> _loadNotes() async {
-    List<Note> notes = await repository.getNotes();
+    List<Note> notes = await useCases.getNotes();
     _sortNotes(notes);
     _state = state.copyWith(notes: notes);
     notifyListeners();
@@ -78,20 +78,17 @@ class NoteViewModel with ChangeNotifier {
 
   Future<void> _deleteNote(Note note) async {
     try {
-      await repository.deleteNoteById(note.id!);
+      await useCases.deleteNote(note);
       _recentlyDeletedNote = note;
-      final updatedNotes = await repository.getNotes();
-      _sortNotes(updatedNotes);
-      _state = state.copyWith(notes: updatedNotes);
-      notifyListeners();
+      await _loadNotes();
     } catch (e) {
-      print('Error deleting note: $e');
+      throw Exception('Error deleting note: $e');
     }
   }
 
   Future<void> _restoreNote() async {
     if (_recentlyDeletedNote != null) {
-      await repository.insertNote(_recentlyDeletedNote!);
+      await useCases.addNote(_recentlyDeletedNote!);
       _recentlyDeletedNote = null;
 
       _loadNotes();

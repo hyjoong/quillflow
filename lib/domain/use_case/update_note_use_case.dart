@@ -1,11 +1,11 @@
 import 'package:quillflow/domain/model/note.dart';
 import 'package:quillflow/domain/repository/note_repository.dart';
 
-class GetNote {
+class UpdateNoteUseCase {
   final NoteRepository repository;
+  UpdateNoteUseCase(this.repository);
 
-  GetNote(this.repository);
-  Future<Note?> call(int id) async {
-    return await repository.getNoteById(id);
+  Future<void> call(Note note) async {
+    await repository.updateNote(note);
   }
 }
