@@ -38,17 +38,19 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   @override
   void initState() {
     super.initState();
+    final viewModel = context.read<AddEditNoteViewModel>();
+
     if (widget.note != null) {
       _titleController.text = widget.note!.title;
       _contentController.text = widget.note!.content;
+      // 초기 상태 저장
       Future.microtask(() {
-        final viewModel = context.read<AddEditNoteViewModel>();
-        viewModel.initializeColor(widget.note);
+        viewModel.initializeNote(widget.note);
       });
     } else {
+      // 새 노트인 경우 초기화
       Future.microtask(() {
-        final viewModel = context.read<AddEditNoteViewModel>();
-        viewModel.initializeColor(null);
+        viewModel.initializeNote(null);
       });
     }
 

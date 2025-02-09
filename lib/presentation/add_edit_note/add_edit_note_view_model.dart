@@ -11,22 +11,42 @@ class AddEditNoteViewModel with ChangeNotifier {
   final NoteRepository repository;
 
   int _color = mint.value;
+  String? _initialTitle;
+  String? _initialContent;
+  int? _initialColor;
+
   int get color => _color;
 
   final _eventController = StreamController<AddEditNoteUiEvent>.broadcast();
-
   Stream<AddEditNoteUiEvent> get eventStream => _eventController.stream;
 
   AddEditNoteViewModel(this.repository);
 
-  void initializeColor(Note? note) {
+  void initializeNote(Note? note) {
     if (note != null) {
+      _initialTitle = note.title;
+      _initialContent = note.content;
+      _initialColor = note.color;
       _color = note.color;
       notifyListeners();
     } else {
+      _initialTitle = null;
+      _initialContent = null;
+      _initialColor = mint.value;
       _color = mint.value;
       notifyListeners();
     }
+  }
+
+  bool isNoteChanged(String title, String content) {
+    if (_initialTitle == null || _initialContent == null) {
+      // 새 노트인 경우
+      return title.isNotEmpty || content.isNotEmpty;
+    }
+    // 기존 노트인 경우 - 제목, 내용, 색상 중 하나라도 변경되었는지 확인
+    return title != _initialTitle ||
+        content != _initialContent ||
+        _color != _initialColor;
   }
 
   void onEvent(AddEditNoteEvent event) {
@@ -40,6 +60,12 @@ class AddEditNoteViewModel with ChangeNotifier {
   }
 
   Future<void> _saveNote(int? id, String title, String content) async {
+    // 변경사항이 없으면 저장하지 않음
+    if (!isNoteChanged(title, content)) {
+      _eventController.add(const AddEditNoteUiEvent.saveNote());
+      return;
+    }
+
     if (title.isEmpty && content.isEmpty) {
       return;
     }
