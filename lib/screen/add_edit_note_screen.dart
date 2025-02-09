@@ -47,9 +47,7 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
 
       _streamSubscription = viewModel.eventStream.listen((event) {
         event.when(
-          saveNote: () {
-            Navigator.pop(context, true);
-          },
+          saveNote: () {},
           showSnackBar: (String message) {
             final snackBar = SnackBar(content: Text(message));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -74,86 +72,75 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
     return Scaffold(
       backgroundColor: Color(viewModel.color),
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(viewModel.color).withOpacity(0.2),
-                      blurRadius: 15,
-                      spreadRadius: 5,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    _buildColorPicker(),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            TextField(
-                              controller: _titleController,
-                              style: Theme.of(context).textTheme.headlineSmall,
-                              decoration: InputDecoration(
-                                hintText: '제목',
-                                hintStyle:
-                                    TextStyle(color: darkGray.withOpacity(0.5)),
-                                border: InputBorder.none,
-                              ),
-                            ),
-                            const Divider(height: 20),
-                            Expanded(
-                              child: TextField(
-                                controller: _contentController,
-                                maxLines: null,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                                decoration: InputDecoration(
-                                  hintText: '여기에 내용을 입력하세요...',
-                                  hintStyle: TextStyle(
-                                      color: darkGray.withOpacity(0.5)),
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: FloatingActionButton(
-          onPressed: () {
+        child: WillPopScope(
+          onWillPop: () async {
             viewModel.onEvent(AddEditNoteEvent.saveNote(
               widget.note?.id,
               _titleController.text,
               _contentController.text,
             ));
+            return true;
           },
-          child: const Icon(Icons.save, color: darkGray),
-          backgroundColor: Colors.white.withOpacity(0.95),
+          child: Column(
+            children: [
+              _buildHeader(),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(viewModel.color).withOpacity(0.2),
+                        blurRadius: 15,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      _buildColorPicker(),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              TextField(
+                                controller: _titleController,
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
+                                decoration: InputDecoration(
+                                  hintText: '제목',
+                                  hintStyle: TextStyle(
+                                      color: darkGray.withOpacity(0.5)),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                              const Divider(height: 20),
+                              Expanded(
+                                child: TextField(
+                                  controller: _contentController,
+                                  maxLines: null,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  decoration: InputDecoration(
+                                    hintText: '여기에 내용을 입력하세요...',
+                                    hintStyle: TextStyle(
+                                        color: darkGray.withOpacity(0.5)),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -212,7 +199,15 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              final viewModel = context.read<AddEditNoteViewModel>();
+              viewModel.onEvent(AddEditNoteEvent.saveNote(
+                widget.note?.id,
+                _titleController.text,
+                _contentController.text,
+              ));
+              Navigator.pop(context, true); // 여기서만 pop 실행
+            },
           ),
           const Expanded(
             child: Text(

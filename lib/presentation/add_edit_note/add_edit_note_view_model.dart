@@ -32,26 +32,34 @@ class AddEditNoteViewModel with ChangeNotifier {
   }
 
   Future<void> _saveNote(int? id, String title, String content) async {
-    if (title.isEmpty || content.isEmpty) {
-      _eventController
-          .add(const AddEditNoteUiEvent.showSnackBar('제목이나 내용이 비어 있습니다'));
+    if (title.isEmpty && content.isEmpty) {
       return;
     }
 
     final currentTime = DateTime.now().millisecondsSinceEpoch;
+    String finalTitle = title;
+    String finalContent = content;
+
+    if (title.isEmpty && content.isNotEmpty) {
+      finalTitle = content.split('\n')[0];
+      if (finalTitle.length > 50) {
+        finalTitle = '${finalTitle.substring(0, 47)}...';
+      }
+      finalContent = content;
+    }
 
     if (id == null) {
       await repository.insertNote(Note(
-        title: title,
-        content: content,
+        title: finalTitle,
+        content: finalContent,
         color: _color,
         timestamp: currentTime,
       ));
     } else {
       await repository.updateNote(Note(
         id: id,
-        title: title,
-        content: content,
+        title: finalTitle,
+        content: finalContent,
         color: _color,
         timestamp: currentTime,
       ));
