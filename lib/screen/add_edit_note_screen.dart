@@ -10,7 +10,6 @@ import 'package:quillflow/ui/colors.dart';
 import 'package:provider/provider.dart';
 
 class AddEditNoteScreen extends StatefulWidget {
-  // note를 받으면 수정화면, null이면 추가화면
   final Note? note;
 
   const AddEditNoteScreen({
@@ -42,6 +41,15 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
     if (widget.note != null) {
       _titleController.text = widget.note!.title;
       _contentController.text = widget.note!.content;
+      Future.microtask(() {
+        final viewModel = context.read<AddEditNoteViewModel>();
+        viewModel.initializeColor(widget.note);
+      });
+    } else {
+      Future.microtask(() {
+        final viewModel = context.read<AddEditNoteViewModel>();
+        viewModel.initializeColor(null);
+      });
     }
 
     Future.microtask(() {

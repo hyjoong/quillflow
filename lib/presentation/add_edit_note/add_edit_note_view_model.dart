@@ -19,16 +19,24 @@ class AddEditNoteViewModel with ChangeNotifier {
 
   AddEditNoteViewModel(this.repository);
 
-  void onEvent(AddEditNoteEvent event) {
-    event.when(
-      changeColor: _changeColor,
-      saveNote: _saveNote,
-    );
+  void initializeColor(Note? note) {
+    if (note != null) {
+      _color = note.color;
+      notifyListeners();
+    } else {
+      _color = mint.value;
+      notifyListeners();
+    }
   }
 
-  Future<void> _changeColor(int color) async {
-    _color = color;
-    notifyListeners();
+  void onEvent(AddEditNoteEvent event) {
+    event.when(
+      changeColor: (color) {
+        _color = color;
+        notifyListeners();
+      },
+      saveNote: _saveNote,
+    );
   }
 
   Future<void> _saveNote(int? id, String title, String content) async {
