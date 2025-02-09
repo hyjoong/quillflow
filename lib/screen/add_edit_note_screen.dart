@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:quillflow/domain/model/note.dart';
 import 'package:quillflow/presentation/add_edit_note/add_edit_note_event.dart';
 import 'package:quillflow/presentation/add_edit_note/add_edit_note_view_model.dart';
+import 'package:quillflow/presentation/notes/notes_event.dart';
+import 'package:quillflow/presentation/notes/notes_view_model.dart';
 import 'package:quillflow/ui/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -206,7 +208,7 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
                 _titleController.text,
                 _contentController.text,
               ));
-              Navigator.pop(context, true); // 여기서만 pop 실행
+              Navigator.pop(context, true);
             },
           ),
           const Expanded(
@@ -216,7 +218,120 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(width: 40),
+          if (widget.note != null)
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('노트 삭제'),
+                        content: const Text('이 노트를 삭제하시겠습니까?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(
+                              '취소',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              final viewModel = context.read<NoteViewModel>();
+                              viewModel
+                                  .onEvent(NotesEvent.deleteNote(widget.note!));
+                              Navigator.pop(context);
+                              Navigator.pop(context, true);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('노트가 삭제되었습니다.'),
+                                  action: SnackBarAction(
+                                    label: '실행취소',
+                                    textColor: Colors.white,
+                                    onPressed: () {
+                                      viewModel.onEvent(
+                                          const NotesEvent.restoreNote());
+                                    },
+                                  ),
+                                  backgroundColor: Colors.red[400],
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: const EdgeInsets.all(16),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[600],
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              '삭제',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8), // 마지막 버튼 오른쪽 여백
+                        ],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        actionsPadding:
+                            const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.delete_outline,
+                          color: Colors.red[700],
+                          size: 20,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '삭제',
+                          style: TextStyle(
+                            color: Colors.red[700],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else
+            const SizedBox(width: 40),
         ],
       ),
     );
