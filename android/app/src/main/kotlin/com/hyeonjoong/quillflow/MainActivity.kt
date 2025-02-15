@@ -1,4 +1,4 @@
-package com.example.quillflow
+package com.hyeonjoong.quillflow
 
 import io.flutter.embedding.android.FlutterActivity
 
