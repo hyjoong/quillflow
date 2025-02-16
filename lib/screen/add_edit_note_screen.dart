@@ -67,6 +67,13 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
         );
       });
     });
+
+    _titleController.addListener(() {
+      setState(() {});
+    });
+    _contentController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -74,6 +81,8 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
     _streamSubscription?.cancel();
     _titleController.dispose();
     _contentController.dispose();
+    _titleController.removeListener(() {});
+    _contentController.removeListener(() {});
     super.dispose();
   }
 
@@ -86,12 +95,11 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
       body: SafeArea(
         child: WillPopScope(
           onWillPop: () async {
-            viewModel.onEvent(AddEditNoteEvent.saveNote(
+            return await viewModel.onBackPressed(
               widget.note?.id,
               _titleController.text,
               _contentController.text,
-            ));
-            return true;
+            );
           },
           child: Column(
             children: [
@@ -205,20 +213,25 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   }
 
   Widget _buildHeader() {
+    final bool hasContent =
+        _titleController.text.isNotEmpty || _contentController.text.isNotEmpty;
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () {
+            onPressed: () async {
               final viewModel = context.read<AddEditNoteViewModel>();
-              viewModel.onEvent(AddEditNoteEvent.saveNote(
+              await viewModel.onBackPressed(
                 widget.note?.id,
                 _titleController.text,
                 _contentController.text,
-              ));
-              Navigator.pop(context, true);
+              );
+              if (mounted) {
+                Navigator.pop(context, true);
+              }
             },
           ),
           const Expanded(
@@ -228,121 +241,182 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
               textAlign: TextAlign.center,
             ),
           ),
-          if (widget.note != null)
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(8),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('노트 삭제'),
-                        content: const Text('이 노트를 삭제하시겠습니까?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(
-                              '취소',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+          SizedBox(
+            width: 80,
+            child: widget.note != null
+                ? _buildDeleteButton()
+                : AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: hasContent ? 1.0 : 0.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              final viewModel = context.read<NoteViewModel>();
-                              viewModel
-                                  .onEvent(NotesEvent.deleteNote(widget.note!));
-                              Navigator.pop(context);
-                              Navigator.pop(context, true);
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text('노트가 삭제되었습니다.'),
-                                  action: SnackBarAction(
-                                    label: '실행취소',
-                                    textColor: Colors.white,
-                                    onPressed: () {
-                                      viewModel.onEvent(
-                                          const NotesEvent.restoreNote());
-                                    },
-                                  ),
-                                  backgroundColor: Colors.red[400],
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  margin: const EdgeInsets.all(16),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red[600],
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: const Text(
-                              '삭제',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8), // 마지막 버튼 오른쪽 여백
                         ],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        actionsPadding:
-                            const EdgeInsets.fromLTRB(16, 0, 16, 16),
                       ),
-                    );
-                  },
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.delete_outline,
-                          color: Colors.red[700],
-                          size: 20,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '삭제',
-                          style: TextStyle(
-                            color: Colors.red[700],
-                            fontWeight: FontWeight.w600,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: hasContent
+                              ? () async {
+                                  final viewModel =
+                                      context.read<AddEditNoteViewModel>();
+                                  await viewModel.onBackPressed(
+                                    widget.note?.id,
+                                    _titleController.text,
+                                    _contentController.text,
+                                  );
+                                  if (mounted) {
+                                    Navigator.pop(context, true);
+                                  }
+                                }
+                              : null,
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.check,
+                                  color: darkGray,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  '완료',
+                                  style: TextStyle(
+                                    color: darkGray,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            )
-          else
-            const SizedBox(width: 40),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDeleteButton() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('노트 삭제'),
+                content: const Text('이 노트를 삭제하시겠습니까?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      '취소',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      final viewModel = context.read<NoteViewModel>();
+                      viewModel.onEvent(NotesEvent.deleteNote(widget.note!));
+                      Navigator.pop(context);
+                      Navigator.pop(context, true);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('노트가 삭제되었습니다.'),
+                          action: SnackBarAction(
+                            label: '실행취소',
+                            textColor: Colors.white,
+                            onPressed: () {
+                              viewModel.onEvent(const NotesEvent.restoreNote());
+                            },
+                          ),
+                          backgroundColor: Colors.red[400],
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          margin: const EdgeInsets.all(16),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[600],
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      '삭제',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8), // 마지막 버튼 오른쪽 여백
+                ],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.delete_outline,
+                  color: Colors.red[700],
+                  size: 20,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '삭제',
+                  style: TextStyle(
+                    color: Colors.red[700],
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

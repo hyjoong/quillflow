@@ -101,4 +101,9 @@ class AddEditNoteViewModel with ChangeNotifier {
 
     _eventController.add(const AddEditNoteUiEvent.saveNote());
   }
+
+  Future<bool> onBackPressed(int? id, String title, String content) async {
+    await _saveNote(id, title, content);
+    return true;
+  }
 }
