@@ -8,6 +8,7 @@ import 'package:quillflow/presentation/notes/notes_event.dart';
 import 'package:quillflow/presentation/notes/notes_view_model.dart';
 import 'package:quillflow/ui/colors.dart';
 import 'package:provider/provider.dart';
+import 'package:quillflow/core/components/dialogs/dialog_utils.dart';
 
 class AddEditNoteScreen extends StatefulWidget {
   final Note? note;
@@ -106,27 +107,13 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
               return;
             }
 
-            final result = await showDialog<bool>(
+            final result = await showConfirmationDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('메모 저장'),
-                    content: const Text('작성한 메모를 저장하시겠습니까?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: Text(
-                          '저장 안 함',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: const Text('저장'),
-                      ),
-                    ],
-                  ),
+                  title: '메모 저장',
+                  content: '작성한 메모를 저장하시겠습니까?',
+                  cancelText: '저장 안 함',
+                  confirmText: '저장',
+                  confirmColor: Colors.blue[600],
                 ) ??
                 false;
 
@@ -371,72 +358,41 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
-          onTap: () {
-            showDialog(
+          onTap: () async {
+            final shouldDelete = await showConfirmationDialog(
               context: context,
-              builder: (context) => AlertDialog(
-                title: const Text('노트 삭제'),
-                content: const Text('이 노트를 삭제하시겠습니까?'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      '취소',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      final viewModel = context.read<NoteViewModel>();
-                      viewModel.onEvent(NotesEvent.deleteNote(widget.note!));
-                      Navigator.pop(context);
-                      Navigator.pop(context, true);
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('노트가 삭제되었습니다.'),
-                          action: SnackBarAction(
-                            label: '실행취소',
-                            textColor: Colors.white,
-                            onPressed: () {
-                              viewModel.onEvent(const NotesEvent.restoreNote());
-                            },
-                          ),
-                          backgroundColor: Colors.red[400],
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          margin: const EdgeInsets.all(16),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[600],
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text(
-                      '삭제',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8), // 마지막 버튼 오른쪽 여백
-                ],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              ),
+              title: '노트 삭제',
+              content: '이 노트를 삭제하시겠습니까?',
+              cancelText: '취소',
+              confirmText: '삭제',
+              confirmColor: Colors.red[600],
             );
+
+            if (shouldDelete ?? false) {
+              final viewModel = context.read<NoteViewModel>();
+              viewModel.onEvent(NotesEvent.deleteNote(widget.note!));
+              Navigator.pop(context);
+              Navigator.pop(context, true);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('노트가 삭제되었습니다.'),
+                  action: SnackBarAction(
+                    label: '실행취소',
+                    textColor: Colors.white,
+                    onPressed: () {
+                      viewModel.onEvent(const NotesEvent.restoreNote());
+                    },
+                  ),
+                  backgroundColor: Colors.red[400],
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: const EdgeInsets.all(16),
+                ),
+              );
+            }
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
