@@ -93,13 +93,56 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
     return Scaffold(
       backgroundColor: Color(viewModel.color),
       body: SafeArea(
-        child: WillPopScope(
-          onWillPop: () async {
-            return await viewModel.onBackPressed(
-              widget.note?.id,
-              _titleController.text,
-              _contentController.text,
-            );
+        child: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) async {
+            if (didPop) {
+              return;
+            }
+
+            if (!viewModel.isNoteChanged(
+                _titleController.text, _contentController.text)) {
+              Navigator.pop(context);
+              return;
+            }
+
+            final result = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('메모 저장'),
+                    content: const Text('작성한 메모를 저장하시겠습니까?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(
+                          '저장 안 함',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('저장'),
+                      ),
+                    ],
+                  ),
+                ) ??
+                false;
+
+            if (result) {
+              final viewModel = context.read<AddEditNoteViewModel>();
+              await viewModel.onBackPressed(
+                widget.note?.id,
+                _titleController.text,
+                _contentController.text,
+              );
+              if (mounted) {
+                Navigator.pop(context, true);
+              }
+            } else {
+              Navigator.pop(context);
+            }
           },
           child: Column(
             children: [
