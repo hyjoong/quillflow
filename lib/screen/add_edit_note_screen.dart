@@ -246,6 +246,8 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
     final bool hasContent =
         _titleController.text.isNotEmpty || _contentController.text.isNotEmpty;
 
+    final String headerTitle = widget.note != null ? '메모 수정' : '새 메모';
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -264,10 +266,10 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
               }
             },
           ),
-          const Expanded(
+          Expanded(
             child: Text(
-              '노트 작성',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              headerTitle,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
           ),
