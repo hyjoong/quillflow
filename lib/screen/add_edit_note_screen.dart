@@ -369,29 +369,22 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
             );
 
             if (shouldDelete ?? false) {
-              final viewModel = context.read<NoteViewModel>();
-              viewModel.onEvent(NotesEvent.deleteNote(widget.note!));
-              Navigator.pop(context);
-              Navigator.pop(context, true);
+              try {
+                if (!mounted) return;
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('노트가 삭제되었습니다.'),
-                  action: SnackBarAction(
-                    label: '실행취소',
-                    textColor: Colors.white,
-                    onPressed: () {
-                      viewModel.onEvent(const NotesEvent.restoreNote());
-                    },
+                final noteId = widget.note?.id;
+                if (noteId == null) return;
+
+                Navigator.pop(context, 'delete:$noteId');
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('오류가 발생했습니다'),
+                    backgroundColor: Colors.red,
                   ),
-                  backgroundColor: Colors.red[400],
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  margin: const EdgeInsets.all(16),
-                ),
-              );
+                );
+              }
             }
           },
           child: Padding(

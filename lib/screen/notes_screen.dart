@@ -94,14 +94,43 @@ class NotesScreen extends StatelessWidget {
             final note = state.notes[index];
             return GestureDetector(
               onTap: () async {
-                bool? isSaved = await Navigator.push(
+                final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => AddEditNoteScreen(note: note),
                   ),
                 );
-                if (isSaved != null && isSaved) {
-                  viewModel.onEvent(const NotesEvent.loadNotes());
+
+                if (result != null) {
+                  if (result is String && result.startsWith('delete:')) {
+                    final noteId = int.tryParse(result.split(':')[1]);
+                    if (noteId != null) {
+                      final viewModel = context.read<NoteViewModel>();
+                      viewModel.onEvent(NotesEvent.deleteNote(note));
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('노트가 삭제되었습니다.'),
+                          action: SnackBarAction(
+                            label: '실행취소',
+                            textColor: Colors.white,
+                            onPressed: () {
+                              viewModel.onEvent(const NotesEvent.restoreNote());
+                            },
+                          ),
+                          backgroundColor: Colors.red[400],
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          margin: const EdgeInsets.all(16),
+                        ),
+                      );
+                    }
+                  } else if (result == true) {
+                    // 일반 업데이트인 경우 (기존 로직)
+                    viewModel.onEvent(const NotesEvent.loadNotes());
+                  }
                 }
               },
               child: NoteItem(
