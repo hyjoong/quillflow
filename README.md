@@ -32,6 +32,7 @@ Quillflow는 간편한 메모 작성 앱입니다. 다양한 색상으로 메모
 
 ## 다운로드
 
-Quillflow는 Google Play 스토어에서 다운로드할 수 있습니다:
+Quillflow는 Google Play 스토어와 App Store에서 다운로드할 수 있습니다:
 
-[Google Play 스토어에서 다운로드](https://play.google.com/store/apps/details?id=com.hyeonjoong.quillflow)
+- 📱 [Google Play 스토어에서 다운로드](https://play.google.com/store/apps/details?id=com.hyeonjoong.quillflow)
+- 🍎 [App Store에서 다운로드](https://apps.apple.com/kr/app/quillflow/id6747572102)
